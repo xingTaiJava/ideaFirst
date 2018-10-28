@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:v-on="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script src="js/vuejs-2.5.16.js"></script>
+</head>
+<body>
+<div id="lala">
+    <div>{{name}}</div>
+    <div>{{age}}</div>
+    <input type="button" value="你过来呀" v-on:click="fun"><br/>
+    home : <input type="text" v-model="home">
+</div>
+
+</body>
+<script >
+    var vu =new Vue({
+        el:"#lala",
+        data:{
+            name: "百度",
+            age: 15,
+            home :"购物车"
+        },
+
+        methods:{
+            fun:function fun1() {
+                this.name = this.home;
+                vu.age =12;
+
+            }
+        }
+    });
+
+</script>
+</html>

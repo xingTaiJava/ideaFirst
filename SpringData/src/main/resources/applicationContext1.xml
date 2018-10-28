@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:aop="http://www.springframework.org/schema/aop"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:jdbc="http://www.springframework.org/schema/jdbc" xmlns:tx="http://www.springframework.org/schema/tx"
+       xmlns:jpa="http://www.springframework.org/schema/data/jpa" xmlns:task="http://www.springframework.org/schema/task"
+       xsi:schemaLocation="
+      http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+      http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd
+      http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+      http://www.springframework.org/schema/jdbc http://www.springframework.org/schema/jdbc/spring-jdbc.xsd
+      http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd
+      http://www.springframework.org/schema/data/jpa
+      http://www.springframework.org/schema/data/jpa/spring-jpa.xsd">
+
+    <!-- 1.dataSource 配置数据库连接池-->
+    <bean id="dataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource">
+        <property name="driverClass" value="com.mysql.jdbc.Driver" />
+        <property name="jdbcUrl" value="jdbc:mysql://localhost:3306/hibernate" />
+        <property name="user" value="root" />
+        <property name="password" value="root" />
+    </bean>
+
+   <!-- &lt;!&ndash; 2.配置entityManagerFactory -> 代替前天的META-INF/persistence.xml &ndash;&gt;
+    <bean id="entityManagerFactory" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
+       &lt;!&ndash; 注入连接池 &ndash;&gt;
+        <property name="dataSource" ref="dataSource" />
+        &lt;!&ndash;扫描实体类所在的包 &ndash;&gt;
+        <property name="packagesToScan" value="cn.itcast.cn.itcast.domain" />
+        &lt;!&ndash; 指定由哪个框架实现jpa规范 &ndash;&gt;
+        <property name="persistenceProvider">
+            <bean class="org.hibernate.jpa.HibernatePersistenceProvider" />
+        </property>
+        &lt;!&ndash; 配置hibernate(供应商)属性 &ndash;&gt;
+        <property name="jpaVendorAdapter">
+            <bean class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter">
+                &lt;!&ndash; 是否生成建表语句 &ndash;&gt;
+                <property name="generateDdl" value="true" />
+                &lt;!&ndash; 指定数据库类型 &ndash;&gt;
+                <property name="database" value="MYSQL" />
+                &lt;!&ndash; 指定数据库方言 &ndash;&gt;
+                <property name="databasePlatform" value="org.hibernate.dialect.MySQLDialect" />
+                &lt;!&ndash; 是否显示生成的SQL &ndash;&gt;
+                <property name="showSql" value="true" />
+            </bean>
+        </property>
+        &lt;!&ndash; 指定JPA实现方言 &ndash;&gt;
+        <property name="jpaDialect">
+            <bean class="org.springframework.orm.jpa.vendor.HibernateJpaDialect" />
+        </property>
+    </bean>-->
+    <!-- entityManagerFactory -->
+    <bean id="entityManagerFactory"
+          class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
+        <!-- 数据源 -->
+        <property name="dataSource" ref="dataSource" />
+        <!-- 指定实体所在包 -->
+        <property name="packagesToScan" value="cn.itcast.cn.itcast.domain" />
+        <!-- 指定持久层提供者为Hibernate -->
+        <!-- 指定jpa规范实现框架为hibernate -->
+        <property name="persistenceProvider">
+            <bean class="org.hibernate.jpa.HibernatePersistenceProvider" />
+        </property>
+        <!-- 操作适配器=>hibernate -->
+        <property name="jpaVendorAdapter">
+            <bean class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter"/>
+        </property>
+        <!-- jpa操作方言 => hibernate -->
+        <property name="jpaDialect">
+            <bean class="org.springframework.orm.jpa.vendor.HibernateJpaDialect" />
+        </property>
+        <!-- 指定hibernate配置厂商属性 -->
+        <property name="jpaProperties">
+            <props>
+                <!-- 指定库名(MYSQL)|用户名(Oracle) -->
+                <prop key="hibernate.default_schema">hibernate</prop>
+                <prop key="hibernate.show_sql">true</prop>
+                <prop key="hibernate.format_sql">true</prop>
+                <prop key="hibernate.hbm2ddl.auto">update</prop>
+                <prop key="hibernate.dialect">org.hibernate.dialect.MySQLDialect</prop>
+            </props>
+        </property>
+    </bean>
+
+
+    <!-- 3.事务管理器-->
+    <!-- JPA事务管理器  -->
+    <bean id="transactionManager" class="org.springframework.orm.jpa.JpaTransactionManager">
+        <property name="entityManagerFactory" ref="entityManagerFactory" />
+    </bean>
+    <!--注解驱动事务-->
+    <tx:annotation-driven transaction-manager="transactionManager" ></tx:annotation-driven>
+
+    <!-- 4.txAdvice-->
+    <tx:advice id="txAdvice" transaction-manager="transactionManager">
+        <tx:attributes>
+            <tx:method name="save*" propagation="REQUIRED"/>
+            <tx:method name="insert*" propagation="REQUIRED"/>
+            <tx:method name="update*" propagation="REQUIRED"/>
+            <tx:method name="delete*" propagation="REQUIRED"/>
+            <tx:method name="get*" read-only="true"/>
+            <tx:method name="find*" read-only="true"/>
+            <tx:method name="*" propagation="REQUIRED"/>
+        </tx:attributes>
+    </tx:advice>
+
+    <!-- 5.aop-->
+    <aop:config>
+        <aop:pointcut id="pointcut" expression="execution(* cn.itcast.service.*.*(..))" />
+        <aop:advisor advice-ref="txAdvice" pointcut-ref="pointcut" />
+    </aop:config>
+
+
+    <!-- 整合spring data jpa-->
+    <jpa:repositories base-package="cn.itcast.cn.itcast.dao"
+                      transaction-manager-ref="transactionManager"
+                      entity-manager-factory-ref="entityManagerFactory"></jpa:repositories>
+
+
+    <!-- 扫描Spring组件 -->
+    <context:component-scan base-package="cn.itcast"></context:component-scan>
+
+    <!--组装其它 配置文件-->
+
+</beans>

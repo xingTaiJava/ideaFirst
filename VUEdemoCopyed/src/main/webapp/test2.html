@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>event</title>
+    <script src="js/vuejs-2.5.16.js"></script>
+</head>
+<body>
+<div id ="bai">
+    <form action="#" v-on:submit="fun1()">
+        <input type="text" v-modle="lele"  ><br/>
+        <input type="submit" value="提交1">
+    </form><br>
+
+    <form action="#" v-on:submit.prevernt="fun2($event)">
+        <input type="text" v-modle="dongdong"  ><br/>
+        <input type="submit" value="提交2">
+    </form>
+</div>
+
+</body>
+
+<script >
+    var vu =new Vue({
+        el:"#bai",
+        data:{
+            lele:"哒哒",
+            dongdong: "len"
+        },
+        methods:{
+           fun1: function () {
+               alert(vu.lele);
+           } ,
+
+           fun2:function (event) {
+               event.preventDefault();
+               alert(vu.dongdong);
+           }
+        }
+    })
+</script>
+</html>

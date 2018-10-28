@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:v-on="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script src="js/vuejs-2.5.16.js"></script>
+</head>
+<body>
+<div id="hao">
+    <form id="formid" action="#">
+      <input type="text" v-model="home" v-on:keydown.enter="fun2($event)">
+        <input type="submit" v-on:keydown.enter="fun1">
+    </form>
+</div>
+
+</body>
+
+<script>
+    var vue =new Vue({
+        el:"#hao",
+        data:{
+            home:"真好"
+        },
+        methods:{
+            fun1:function () {
+                alert(this.home);
+            },
+            fun2:function (event) {
+                if(event.keyCode==13){
+                    document.getElementById("formid").onsubmit;
+                    alert(this.home);
+                }
+            }
+        }
+    })
+</script>
+</html>
