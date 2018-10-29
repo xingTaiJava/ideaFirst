@@ -6,18 +6,11 @@
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
-        <module name="Hibernate" />
-        <module name="SpringData" />
-        <module name="SpringDataDay02" />
-        <module name="VUEdemo" />
+        <module name="GitTest" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
-      <module name="Hibernate" target="1.8" />
-      <module name="SpringData" target="1.8" />
-      <module name="SpringDataDay02" target="1.8" />
-      <module name="VUEdemo" target="1.8" />
-      <module name="VUEdemo (1)" target="1.8" />
+      <module name="GitTest" target="1.7" />
     </bytecodeTargetLevel>
   </component>
 </project>
